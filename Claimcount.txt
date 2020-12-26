@@ -1,0 +1,9 @@
+//Import csv file and build the relation ship between location to year and year to month and month to service line
+LOAD CSV WITH HEADERS FROM 'file:///ClaimsCount.csv' AS csv
+merge (loc:LOCATION {loc: csv.location})
+merge (yr:YEAR {yr: csv.YEAR,loc: csv.location})
+merge (m :MONTH {m : csv.MONTH,yr: csv.YEAR,loc: csv.location})
+merge (sl :ServiceLine {sl : csv.service_line,m : csv.MONTH,yr: csv.YEAR,loc: csv.location})
+merge (loc)-[:location_claims]->(yr)
+merge (yr)-[:year_claims]->(m)
+merge (m)-[:serviceline_claims{claim_count:csv.claim_count}]->(sl)
